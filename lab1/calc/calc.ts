@@ -35,7 +35,7 @@ function processExpression(expression: string): number {
     return stack[0] as number;
 }
 
-function isOperator(token: string): boolean {
+const isOperator = (token: string): boolean => {
     return "+-*/".includes(token) && token.length == 1;
 }
 
@@ -51,7 +51,6 @@ function tokenize(expression: string): string[] {
                 token = "";
             }
             depth++;
-            token += char;
         } else if (char === ")") {
             depth--;
             token += char;
@@ -78,7 +77,7 @@ function tokenize(expression: string): string[] {
     return tokens;
 }
 
-function calculateStack(stack: TokensStack) {
+const calculateStack = (stack: TokensStack) => {
     while (canApplyOperation(stack)) {
         const b = stack.pop() as number;
         const a = stack.pop() as number;
@@ -89,7 +88,7 @@ function calculateStack(stack: TokensStack) {
     }
 }
 
-function canApplyOperation(stack: TokensStack) {
+const canApplyOperation = (stack: TokensStack) => {
     return (
         stack.length >= 3 &&
         typeof stack[stack.length - 1] === "number" &&
@@ -98,8 +97,8 @@ function canApplyOperation(stack: TokensStack) {
     );
 }
 
-function applyOperator(op: string, a: number, b: number): number {
-    switch (op) {
+const applyOperator = (operator: string, a: number, b: number): number => {
+    switch (operator) {
         case "+":
             return a + b;
         case "-":
@@ -110,6 +109,6 @@ function applyOperator(op: string, a: number, b: number): number {
             if (b === 0) throw new Error("Zero division error");
             return a / b;
         default:
-            throw new Error("Unknown operation: " + op);
+            throw new Error("Unknown operation: " + operator);
     }
 }
