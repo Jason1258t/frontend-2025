@@ -1,7 +1,7 @@
 export default function calc(expression: string) {
     try {
         expression = expression.trim();
-        let result = processExpression(expression);
+        const result = processExpression(expression);
         console.log(expression + " = " + result);
     } catch (e) {
         console.log("Invalid expression: " + e);
