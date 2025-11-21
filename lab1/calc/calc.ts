@@ -1,11 +1,11 @@
 export default function calc(expression: string) {
-  try {
-    expression = expression.trim();
-    let result = processExpression(expression);
-    console.log(expression + " = " + result);
-  } catch (e) {
-    console.log("Invalid expression: " + e);
-  }
+    try {
+        expression = expression.trim();
+        const result = processExpression(expression);
+        console.log(expression + " = " + result);
+    } catch (e) {
+        console.log("Invalid expression: " + e);
+    }
 }
 
 type TokensStack<T = string | number> = T[];
