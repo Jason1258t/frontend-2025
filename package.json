@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-         "tsrun": "node --loader ts-node/esm"
+        "tsrun": "tsx"
     },
     "repository": {
         "type": "git",
@@ -20,8 +20,8 @@
     },
     "homepage": "https://github.com/Jason1258t/frontend-2025#readme",
     "devDependencies": {
-        "@types/node": "^24.3.1",
-        "ts-node": "^10.9.2",
+        "@types/node": "^24.10.1",
+        "tsx": "^4.19.0",
         "typescript": "^5.9.2"
     }
 }
