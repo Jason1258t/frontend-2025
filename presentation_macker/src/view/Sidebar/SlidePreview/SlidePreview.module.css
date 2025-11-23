@@ -57,19 +57,13 @@
   width: 100%;
   height: 100%;
   background: transparent;
-  font-family: sans-serif;
-  overflow: visible;
-  overflow: hidden;
   word-wrap: break-word;
-  line-height: 1.2;
-  transform-origin: top left;
 }
 
 .imageElement {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transform-origin: top left;
+  object-fit: fill;
 }
 
 .title {
