@@ -1,4 +1,4 @@
-import type Presentation from "../types/presentation";
+import type { Presentation } from "../types/presentation";
 import type { Slide, SlidesCollection } from "../types/slide";
 import type { SlideObject, Text, Image } from "../types/slide-content";
 import type { SlideTheme } from "../types/slide-theme";
@@ -12,14 +12,14 @@ export const createMinimalPresentation = (): Presentation => {
     theme: {
       id: "minimal-theme-1",
       color: "#FFFFFF",
-      backgroundImage: ""
+      backgroundImage: "",
     },
-    content: []
+    content: [],
   };
 
   const minimalSlidesCollection: SlidesCollection = {
     id: "minimal-collection",
-    slides: [minimalSlide]
+    slides: [minimalSlide],
   };
 
   return {
@@ -31,7 +31,7 @@ export const createMinimalPresentation = (): Presentation => {
     currentSlideId: "minimal-slide-1",
     slidesCollection: minimalSlidesCollection,
     slideSelection: null,
-    objectSelection: null
+    objectSelection: null,
   };
 };
 
@@ -42,7 +42,7 @@ export const createMaximalPresentation = (): Presentation => {
     value: "Hello World",
     fontFamily: "Arial",
     fontSize: 16,
-    color: "#000000"
+    color: "#000000",
   };
 
   const textObject2: Text = {
@@ -50,49 +50,53 @@ export const createMaximalPresentation = (): Presentation => {
     value: "Second Text",
     fontFamily: "Helvetica",
     fontSize: 24,
-    color: "#FF0000"
+    color: "#FF0000",
   };
 
   const imageObject1: Image = {
     id: "image-1",
-    src: "image1.jpg"
+    src: "image1.jpg",
   };
 
   const imageObject2: Image = {
     id: "image-2",
-    src: "image2.png"
+    src: "image2.png",
   };
 
   const slideObject1: SlideObject = {
+    type: "text",
     id: "object-1",
     content: textObject1,
     position: { x: 10, y: 20 },
     zIndex: 1,
-    rect: { width: 100, height: 50 }
+    rect: { width: 100, height: 50 },
   };
 
   const slideObject2: SlideObject = {
+    type: "text",
     id: "object-2",
     content: textObject2,
     position: { x: 50, y: 100 },
     zIndex: 2,
-    rect: { width: 150, height: 75 }
+    rect: { width: 150, height: 75 },
   };
 
   const slideObject3: SlideObject = {
+    type: "image",
     id: "object-3",
     content: imageObject1,
     position: { x: 200, y: 50 },
     zIndex: 3,
-    rect: { width: 300, height: 200 }
+    rect: { width: 300, height: 200 },
   };
 
   const slideObject4: SlideObject = {
+    type: "image",
     id: "object-4",
     content: imageObject2,
     position: { x: 100, y: 150 },
     zIndex: 4,
-    rect: { width: 250, height: 150 }
+    rect: { width: 250, height: 150 },
   };
 
   const slide1: Slide = {
@@ -101,9 +105,9 @@ export const createMaximalPresentation = (): Presentation => {
     theme: {
       id: "theme-1",
       color: "#FFFFFF",
-      backgroundImage: "bg1.jpg"
+      backgroundImage: "bg1.jpg",
     },
-    content: [slideObject1, slideObject2]
+    content: [slideObject1, slideObject2],
   };
 
   const slide2: Slide = {
@@ -112,24 +116,24 @@ export const createMaximalPresentation = (): Presentation => {
     theme: {
       id: "theme-2",
       color: "#F0F0F0",
-      backgroundImage: "bg2.jpg"
+      backgroundImage: "bg2.jpg",
     },
-    content: [slideObject3, slideObject4]
+    content: [slideObject3, slideObject4],
   };
 
   const objectSelection: ObjectSelection = {
     id: "object-selection-1",
-    objects: [slideObject1, slideObject3]
+    objects: [slideObject1, slideObject3],
   };
 
   const slideSelection: SlideSelection = {
     id: "slide-selection-1",
-    slides: ["slide-1", "slide-2"]
+    slides: ["slide-1", "slide-2"],
   };
 
   const maximalSlidesCollection: SlidesCollection = {
     id: "maximal-collection",
-    slides: [slide1, slide2]
+    slides: [slide1, slide2],
   };
 
   return {
@@ -142,7 +146,7 @@ export const createMaximalPresentation = (): Presentation => {
     currentSlideId: "slide-1",
     slidesCollection: maximalSlidesCollection,
     slideSelection: slideSelection,
-    objectSelection: objectSelection
+    objectSelection: objectSelection,
   };
 };
 
@@ -153,38 +157,40 @@ export const createTestSlide = (): Slide => ({
   theme: {
     id: "test-theme",
     color: "#FFFFFF",
-    backgroundImage: "test-bg.jpg"
+    backgroundImage: "test-bg.jpg",
   },
-  content: []
+  content: [],
 });
 
 export const createTestTextObject = (): SlideObject => ({
   id: "test-text-object",
+  type: "text",
   content: {
     id: "test-text",
     value: "Test Text",
     fontFamily: "Arial",
     fontSize: 16,
-    color: "#000000"
+    color: "#000000",
   },
   position: { x: 0, y: 0 },
   zIndex: 1,
-  rect: { width: 100, height: 50 }
+  rect: { width: 100, height: 50 },
 });
 
 export const createTestImageObject = (): SlideObject => ({
   id: "test-image-object",
+  type: "image",
   content: {
     id: "test-image",
-    src: "test-image.jpg"
+    src: "test-image.jpg",
   },
   position: { x: 50, y: 50 },
   zIndex: 2,
-  rect: { width: 200, height: 150 }
+  rect: { width: 200, height: 150 },
 });
 
 export const createTestTheme = (): SlideTheme => ({
   id: "test-theme",
   color: "#FF0000",
-  backgroundImage: "new-bg.jpg"
+  backgroundImage: "new-bg.jpg",
 });

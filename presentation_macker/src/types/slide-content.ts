@@ -15,12 +15,23 @@ type Position = {
  x: number, y: number
 } 
 
-type SlideObject = {
+type BaseSlideObject = {
   id: string;
-  content: Text | Image;
   position: Position;
   zIndex: number;
-  rect: { width: number, height: number }
-}
+  rect: { width: number; height: number };
+};
+
+type TextObject = BaseSlideObject & {
+  type: 'text';
+  content: Text;
+};
+
+type ImageObject = BaseSlideObject & {
+  type: 'image';
+  content: Image;
+};
+
+type SlideObject = TextObject | ImageObject;
 
 export type { Text, Image, SlideObject, Position }

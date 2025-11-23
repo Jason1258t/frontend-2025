@@ -1,5 +1,5 @@
-import type { SlideObject } from "./slide-content.js";
-import type { SlideTheme } from "./slide-theme.js";
+import type { SlideObject } from "./slide-content";
+import type { SlideTheme } from "./slide-theme";
 
 type Slide = {
   id: string;

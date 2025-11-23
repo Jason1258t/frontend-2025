@@ -1,7 +1,7 @@
 import type { ObjectSelection, SlideSelection } from "./selection";
 import type { SlidesCollection } from "./slide";
 
-export default interface Presentation {
+export type Presentation = {
   id: string;
   title: string;
   description?: string;
