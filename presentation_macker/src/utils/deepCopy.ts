@@ -8,7 +8,7 @@ export const deepCopy = <T>(obj: T): T => {
   }
 
   if (obj instanceof Array) {
-    return obj.map(item => deepCopy(item)) as T;
+    return obj.map((item) => deepCopy(item)) as T;
   }
 
   if (typeof obj === "object") {

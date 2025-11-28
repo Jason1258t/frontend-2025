@@ -44,37 +44,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     content: { ...element.content, color: e.target.value },
                   })
                 }
-                className={styles.colorInput}
+                className={`${styles.colorInput} ${styles.input}`}
               />
             </div>
           </>
         )}
-        <div className={styles.field}>
-          <label className={styles.label}>Ширина</label>
-          <input
-            type="number"
-            value={element.rect.width}
-            onChange={(e) =>
-              onUpdate({
-                rect: { ...element.rect, width: parseInt(e.target.value) },
-              })
-            }
-            className="input"
-          />
-        </div>
-        <div className={styles.field}>
-          <label className={styles.label}>Высота</label>
-          <input
-            type="number"
-            value={element.rect.height}
-            onChange={(e) =>
-              onUpdate({
-                rect: { ...element.rect, height: parseInt(e.target.value) },
-              })
-            }
-            className={styles.input}
-          />
-        </div>
       </div>
     </div>
   );

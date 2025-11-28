@@ -1,10 +1,12 @@
 import React from "react";
-import { Type, ImageIcon, Trash2 } from "lucide-react";
+import { Type, ImageIcon, Trash2, Palette } from "lucide-react";
+import { useState } from "react";
 
 import styles from "./Toolbar.module.css";
+import ThemeOverlay from "./ThemeOverlay";
 
 interface ToolbarProps {
-  selectedElement: string | null;
+  selectedElement: any | null;
   onAddText: () => void;
   onAddImage: () => void;
   onDeleteElement: () => void;
@@ -16,6 +18,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onAddImage,
   onDeleteElement,
 }) => {
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const onChangeBackground = () => {
+    setShowOverlay(true);
+  };
   return (
     <div className={styles.toolbar}>
       <div className={styles.toolbarContent}>
@@ -27,6 +34,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <ImageIcon size={20} />
           Изображение
         </button>
+        <button onClick={onChangeBackground} className={styles.toolButton}>
+          <Palette size={20} />
+          Сменить фон
+        </button>
         {selectedElement && (
           <button
             onClick={onDeleteElement}
@@ -37,6 +48,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </button>
         )}
       </div>
+      {showOverlay && <ThemeOverlay onClose={() => setShowOverlay(false)} />}
     </div>
   );
 };

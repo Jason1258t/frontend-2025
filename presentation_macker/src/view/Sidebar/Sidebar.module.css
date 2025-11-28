@@ -1,8 +1,10 @@
 .sidebar {
-  width: 264px;
+  width: 280px;
+  box-sizing: border-box;
   background-color: #ffffff;
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .addButton {

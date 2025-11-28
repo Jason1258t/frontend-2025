@@ -1,13 +1,17 @@
-import type Presentation from "../types/presentation";
+import type { Presentation } from "../types/presentation";
 import type { Text } from "../types/slide-content";
 import { deepCopy } from "./deepCopy";
 
 export const changeTextValue = (
   presentation: Presentation,
-  slideId: string,
-  objectId: string,
-  newValue: string
+  payload: {
+    slideId: string;
+    objectId: string;
+    newValue: string;
+  }
 ): Presentation => {
+  const { slideId, objectId, newValue } = payload;
+
   const newPresentation = deepCopy(presentation);
 
   const slide = newPresentation.slidesCollection.slides.find(

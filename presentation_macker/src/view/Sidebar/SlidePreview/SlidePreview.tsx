@@ -6,7 +6,6 @@ import styles from "./SlidePreview.module.css";
 
 interface SlidePreviewProps {
   slide: Slide;
-  index: number;
   isActive: boolean;
   canDelete: boolean;
   onSelect: () => void;
@@ -74,7 +73,6 @@ const SlideWidget: React.FC<SlideWidgetProps> = ({
 
 const SlidePreview: React.FC<SlidePreviewProps> = ({
   slide,
-  index,
   isActive,
   canDelete,
   onSelect,
@@ -90,7 +88,7 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
           <SlideWidget slide={slide} scale={244 / 960} />
         </div>
       </div>
-      <div className={styles.title}>{index + 1}.</div>
+      <div className={styles.title}>{slide.id}.</div>
       <div className={styles.actions}>
         {canDelete && (
           <button
@@ -101,7 +99,7 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
             className={`${styles.actionButton} ${styles.delete}`}
             title="Удалить"
           >
-            <Trash2 size={14} />
+            <Trash2 size={14} color="#000"/>
           </button>
         )}
       </div>

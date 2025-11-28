@@ -5,8 +5,8 @@ import styles from "./Canvas.module.css";
 
 interface CanvasProps {
   slide: Slide;
-  selectedElement: string | null;
-  onSelectElement: (id: string | null) => void;
+  selectedElements: SlideObject[] | null;
+  onSelectElement: (id: string | null, add: boolean) => void;
   onUpdateElement: (elementId: string, updates: Partial<SlideObject>) => void;
   onMouseDown: (e: React.MouseEvent, elementId: string) => void;
   onMouseMove: (e: React.MouseEvent) => void;
@@ -15,7 +15,7 @@ interface CanvasProps {
 
 const Canvas: React.FC<CanvasProps> = ({
   slide,
-  selectedElement,
+  selectedElements,
   onSelectElement,
   onUpdateElement,
   onMouseDown,
@@ -30,18 +30,23 @@ const Canvas: React.FC<CanvasProps> = ({
         <div
           ref={canvasRef}
           className={styles.canvas}
-          style={{ backgroundColor: slide.theme.color }}
+          style={{ backgroundColor: slide.theme.color, backgroundImage: slide.theme.backgroundImage ? `url(${slide.theme.backgroundImage})` : "none" }}
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseUp}
-          onClick={() => onSelectElement(null)}
+          onClick={() => onSelectElement(null, false)}
         >
           {slide.content.map((element) => (
             <div
               key={element.id}
-              onMouseDown={(e) => onMouseDown(e, element.id)}
+              onMouseDown={(e) => {
+                onSelectElement(element.id, e.shiftKey);
+                onMouseDown(e, element.id);
+              }}
               className={`${styles.element} ${
-                selectedElement === element.id ? styles.selected : ""
+                selectedElements?.findIndex((e) => e.id == element.id) != -1
+                  ? styles.selected
+                  : ""
               }`}
               style={{
                 left: element.position.x,
@@ -56,6 +61,7 @@ const Canvas: React.FC<CanvasProps> = ({
                   suppressContentEditableWarning
                   onBlur={(e) =>
                     onUpdateElement(element.id, {
+                      type: "text",
                       content: {
                         ...element.content,
                         value: e.currentTarget.textContent || "",
@@ -78,6 +84,7 @@ const Canvas: React.FC<CanvasProps> = ({
                   src={element.content.src}
                   alt="slide element"
                   className={styles.imageElement}
+                  onClick={(e) => e.stopPropagation()}
                 />
               )}
             </div>

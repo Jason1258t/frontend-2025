@@ -102,5 +102,6 @@
 }
 
 .actionButton.delete:hover {
-  background-color: #fee2e2;
+  background-color: #ff6a6a;
+  color: white;
 }

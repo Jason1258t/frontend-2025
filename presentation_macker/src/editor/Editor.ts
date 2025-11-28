@@ -19,10 +19,10 @@ export function addEditorChangeHandler(handler: () => any) {
 }
 
 export function dispatch(
-  modifyFunc: (payload: any) => Presentation,
+  modifyFunc: (presentation: Presentation, payload: any) => Presentation,
   payload: any
 ) {
-  const newEditor = modifyFunc(payload);
+  const newEditor = modifyFunc(editor, payload);
   setEditor(newEditor);
   if (editorChangeHandler) {
     editorChangeHandler();

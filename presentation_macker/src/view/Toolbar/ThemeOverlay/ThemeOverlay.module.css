@@ -1,0 +1,112 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.overlayContent {
+  background-color: white;
+  padding: 24px;
+  min-width: 400px;
+  max-width: 50vw;
+  max-height: 60vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #111111;
+  overflow-y: auto;
+}
+
+.overlayContent h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.properties {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.property {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.property.start {
+  align-items: start;
+}
+.property.start h4 {
+  margin-top: 1rem;
+}
+
+.property h4 {
+  margin: 0;
+  max-width: 30%;
+}
+
+.dropZone {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+  max-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropZone:hover {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+}
+
+.dropZone.dragging {
+  border-color: #007bff;
+  background-color: #e6f3ff;
+  transform: scale(1.02);
+}
+
+.dropContent {
+  color: #666;
+}
+
+.dropHint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 8px;
+}
+
+.preview {
+  max-width: 100%;
+  max-height: 300px;
+}
+
+.closePreview {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}

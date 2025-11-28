@@ -8,7 +8,6 @@ import type { ObjectSelection, SlideSelection } from "../types/selection";
 export const createMinimalPresentation = (): Presentation => {
   const minimalSlide: Slide = {
     id: "minimal-slide-1",
-    preview: "",
     theme: {
       id: "minimal-theme-1",
       color: "#FFFFFF",
@@ -101,7 +100,6 @@ export const createMaximalPresentation = (): Presentation => {
 
   const slide1: Slide = {
     id: "slide-1",
-    preview: "preview1.jpg",
     theme: {
       id: "theme-1",
       color: "#FFFFFF",
@@ -112,7 +110,6 @@ export const createMaximalPresentation = (): Presentation => {
 
   const slide2: Slide = {
     id: "slide-2",
-    preview: "preview2.jpg",
     theme: {
       id: "theme-2",
       color: "#F0F0F0",
@@ -123,7 +120,7 @@ export const createMaximalPresentation = (): Presentation => {
 
   const objectSelection: ObjectSelection = {
     id: "object-selection-1",
-    objects: [slideObject1, slideObject3],
+    objects: [slideObject1],
   };
 
   const slideSelection: SlideSelection = {
@@ -153,7 +150,6 @@ export const createMaximalPresentation = (): Presentation => {
 // Тестовые объекты для функций
 export const createTestSlide = (): Slide => ({
   id: "test-slide",
-  preview: "test-preview.jpg",
   theme: {
     id: "test-theme",
     color: "#FFFFFF",

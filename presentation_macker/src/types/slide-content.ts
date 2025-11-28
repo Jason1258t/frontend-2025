@@ -32,6 +32,9 @@ type ImageObject = BaseSlideObject & {
   content: Image;
 };
 
+export const TEXT_RECT = { width: 200, height: 50 };
+export const IMAGE_RECT = { width: 200, height: 150 };
+
 type SlideObject = TextObject | ImageObject;
 
-export type { Text, Image, SlideObject, Position }
+export type { Text, Image, SlideObject, Position, TextObject, ImageObject };

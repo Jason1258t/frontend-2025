@@ -1,4 +1,4 @@
-import type Presentation from "../types/presentation";
+import type { Presentation } from "../types/presentation";
 import type { Slide } from "../types/slide";
 import type { SlideTheme } from "../types/slide-theme";
 import { deepCopy } from "./deepCopy";
@@ -52,9 +52,10 @@ export const moveSlide = (
 
 export const changeBackground = (
   presentation: Presentation,
-  slideId: string,
-  background: SlideTheme
+  payload: { slideId: string; background: SlideTheme }
 ): Presentation => {
+  const { slideId, background } = payload;
+  console.log("changeBackground", slideId, background);
   const newPresentation = deepCopy(presentation);
 
   const slide = newPresentation.slidesCollection.slides.find(
@@ -63,6 +64,27 @@ export const changeBackground = (
   if (slide) {
     slide.theme = deepCopy(background);
     newPresentation.updatedAt = new Date();
+  }
+
+  return newPresentation;
+};
+
+export const selectSlide = (
+  presentation: Presentation,
+  slideId: string
+): Presentation => {
+  const newPresentation = deepCopy(presentation);
+
+  const slideExists = newPresentation.slidesCollection.slides.some(
+    (slide) => slide.id === slideId
+  );
+
+  if (slideExists) {
+    newPresentation.currentSlideId = slideId;
+    if (newPresentation.objectSelection)
+      newPresentation.objectSelection.objects = [];
+  } else {
+    console.warn(`Slide with id ${slideId} not found`);
   }
 
   return newPresentation;

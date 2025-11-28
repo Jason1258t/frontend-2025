@@ -18,6 +18,9 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   width: 960px;
   height: 540px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .element {
@@ -45,4 +48,94 @@
   width: 100%;
   height: 100%;
   object-fit: fill;
+}
+
+/* Canvas.module.css - НОВЫЕ СТИЛИ */
+
+/* Состояние перетаскивания */
+.element.dragging {
+  opacity: 0.8;
+  cursor: grabbing;
+}
+
+/* Точки изменения размера */
+.resizeHandle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #007bff;
+  border: 1px solid white;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.resizeHandle:hover {
+  background: #0056b3;
+  transform: scale(1.2);
+}
+
+/* Позиционирование точек изменения размера */
+.resizeHandle.top-left {
+  top: -4px;
+  left: -4px;
+  cursor: nw-resize;
+}
+
+.resizeHandle.top-center {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.resizeHandle.top-right {
+  top: -4px;
+  right: -4px;
+  cursor: ne-resize;
+}
+
+.resizeHandle.middle-left {
+  top: 50%;
+  left: -4px;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.resizeHandle.middle-right {
+  top: 50%;
+  right: -4px;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}
+
+.resizeHandle.bottom-left {
+  bottom: -4px;
+  left: -4px;
+  cursor: sw-resize;
+}
+
+.resizeHandle.bottom-center {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.resizeHandle.bottom-right {
+  bottom: -4px;
+  right: -4px;
+  cursor: se-resize;
+}
+
+/* Курсоры для различных операций */
+.element {
+  cursor: move;
+}
+
+.element.selected {
+  outline: 2px solid #007bff;
+}
+
+.textElement {
+  cursor: text;
 }
