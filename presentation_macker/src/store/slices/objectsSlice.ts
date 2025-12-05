@@ -39,7 +39,7 @@ const objectsSlice = createSlice({
             action: PayloadAction<{ slideId: string; object: SlideObject }>
         ) => {
             const { slideId, object } = action.payload;
-            console.log("add object to slide", slideId, object)
+            console.log("add object to slide", slideId, object);
             if (!state.objects[slideId]) {
                 state.objects[slideId] = [];
             }
@@ -79,7 +79,28 @@ const objectsSlice = createSlice({
 
             state.objects[slideId][ind].position = newPosition;
         },
+        resizeObjectOnSlide: (
+            state,
+            action: PayloadAction<{
+                slideId: string;
+                objectId: string;
+                newPosition: { x: number; y: number };
+                newSize: { width: number; height: number };
+            }>
+        ) => {
+            const { slideId, objectId, newPosition, newSize } = action.payload;
 
+            if (!state.objects[slideId]) return;
+
+            const ind = state.objects[slideId].findIndex(
+                (e) => e.id === objectId
+            );
+
+            if (ind === -1) return;
+
+            state.objects[slideId][ind].position = newPosition;
+            state.objects[slideId][ind].rect = newSize;
+        },
         changeFontSize: (
             state,
             action: PayloadAction<{
@@ -140,10 +161,17 @@ const objectsSlice = createSlice({
                 ];
             }
         },
-        changeImageSRC: (state, action: PayloadAction<{slideId: string, objectId: string, src: string}>) => {
-            const {slideId, objectId, src} = action.payload;
+        changeImageSRC: (
+            state,
+            action: PayloadAction<{
+                slideId: string;
+                objectId: string;
+                src: string;
+            }>
+        ) => {
+            const { slideId, objectId, src } = action.payload;
 
-            const obj = state.objects[slideId].find(e => e.id === objectId);
+            const obj = state.objects[slideId].find((e) => e.id === objectId);
             if (obj?.type !== "image") return;
             obj.content.src = src;
         },
@@ -163,6 +191,7 @@ export const {
     changeFontFamily,
     moveObjectOnSlide,
     changeObjectColor,
-    changeImageSRC
+    changeImageSRC,
+    resizeObjectOnSlide,
 } = objectsSlice.actions;
 export default objectsSlice.reducer;

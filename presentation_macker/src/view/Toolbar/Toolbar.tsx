@@ -1,22 +1,22 @@
 import { Type, ImageIcon, Trash2, Palette } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import styles from "./Toolbar.module.css";
 import ThemeOverlay from "./ThemeOverlay";
-import {
-    selectCurrentSlide,
-    selectCurrentSlideObjects,
-} from "@/store/selectors/slideSelectors";
-import { useAppDispatch, useAppSelector } from "@/store/store";
-import {
-    addObjectToSlide,
-    removeObjectFromSlide,
-} from "@/store/slices/objectsSlice";
+
 import {
     createDefaultImageObject,
     createDefaultTextObject,
 } from "@/utils/defaultObjects";
 import { getZIndexForNewObject } from "@/utils/getZIndexForObject";
+import {
+    useAppDispatch,
+    useAppSelector,
+    selectCurrentSlide,
+    selectCurrentSlideObjects,
+    addObjectToSlide,
+    removeObjectFromSlide,
+} from "@/store";
 
 const Toolbar = () => {
     const dispatch = useAppDispatch();
@@ -24,6 +24,37 @@ const Toolbar = () => {
     const selectedObjectsIds =
         useAppSelector((state) => state.objects.objectSelection?.objects) ?? [];
     const selectedObjects = useAppSelector(selectCurrentSlideObjects);
+
+    const deleteSelectedObjects = () => {
+        if (!currentSlide) return;
+        for (const el of selectedObjectsIds) {
+            dispatch(
+                removeObjectFromSlide({
+                    slideId: currentSlide.id,
+                    objectId: el,
+                })
+            );
+        }
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (
+                (e.key === "Delete" || e.key === "Backspace") &&
+                currentSlide &&
+                selectedObjectsIds.length > 0
+            ) {
+                e.preventDefault();
+                deleteSelectedObjects();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [selectedObjects]);
 
     const onAddText = () => {
         const newText = createDefaultTextObject(
@@ -79,20 +110,11 @@ const Toolbar = () => {
                 )}
                 {selectedObjectsIds && currentSlide && (
                     <button
-                        onClick={() => {
-                            for (const el of selectedObjectsIds) {
-                                dispatch(
-                                    removeObjectFromSlide({
-                                        slideId: currentSlide.id,
-                                        objectId: el,
-                                    })
-                                );
-                            }
-                        }}
+                        onClick={deleteSelectedObjects}
                         className={`${styles.toolButton} ${styles.deleteButton}`}
                     >
                         <Trash2 size={20} />
-                        Удалить элемент
+                        Удалить
                     </button>
                 )}
             </div>

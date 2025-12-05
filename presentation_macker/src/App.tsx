@@ -1,4 +1,3 @@
-import React from "react";
 import Sidebar from "./view/Sidebar";
 import Toolbar from "./view/Toolbar";
 import Canvas from "./view/Canvas";
@@ -13,22 +12,6 @@ const App = () => {
     const dispatch = useAppDispatch();
     const { title } = useAppSelector((state) => state.presentation);
     const selectedElement = useAppSelector(selectEditingElement);
-
-    const handleMouseDown = (e: React.MouseEvent, elementId: string) => {
-        console.log(
-            "Mouse Down on Element",
-            elementId,
-            "at",
-            e.clientX,
-            e.clientY
-        );
-    };
-    const handleMouseMove = (e: React.MouseEvent) => {
-        console.log("Mouse Move", e.clientX, e.clientY);
-    };
-    const handleMouseUp = () => {
-        console.log("Mouse Up");
-    };
 
     return (
         <div className={styles.app}>

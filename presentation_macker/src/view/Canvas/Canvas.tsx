@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import styles from "./Canvas.module.css";
 import {
     moveObjectOnSlide,
+    resizeObjectOnSlide,
     selectCurrentSlide,
     selectCurrentSlideObjects,
     selectElements,
@@ -11,6 +12,7 @@ import {
 } from "@/store";
 import SlideObjectWidget from "./SlideObjectWidget";
 import type { Position, Size } from "@/types";
+import type { ResizeData, ResizeType } from "./resize";
 
 const Canvas = () => {
     const dispatch = useAppDispatch();
@@ -30,7 +32,10 @@ const Canvas = () => {
         null
     );
 
+    const [resizeData, setResizeData] = useState<ResizeData | null>();
+
     if (!slide) return <h1>No slide</h1>;
+
     const getSelectedRect = (): { position: Position; rect: Size } | null => {
         const objects = elements.filter((e) =>
             (selectedIds ?? []).includes(e.id)
@@ -126,9 +131,122 @@ const Canvas = () => {
         setDragPositionStart(point);
     };
 
+    const onResizeStart = (
+        e: React.MouseEvent,
+        type: ResizeType,
+        elementId: string
+    ) => {
+        e.stopPropagation();
+        setResizeData({
+            id: elementId,
+            position: elements.find((e) => e.id === elementId)!.position,
+            size: elements.find((e) => e.id === elementId)!.rect,
+            startPoint: getRelativePoint(e),
+            startPos: elements.find((e) => e.id === elementId)!.position,
+            startSize: elements.find((e) => e.id === elementId)!.rect,
+            type: type,
+        });
+    };
+
     const onMouseMove = (e: React.MouseEvent) => {
         const point = getRelativePoint(e);
-        if (dragPositionStart) {
+
+        if (resizeData) {
+            const deltaX = point.x - resizeData.startPoint.x;
+            const deltaY = point.y - resizeData.startPoint.y;
+
+            const newPosition = { ...resizeData.startPos };
+            const newSize = { ...resizeData.startSize };
+
+            switch (resizeData.type) {
+                case "nw": // top-left - двигаем левый верхний угол
+                    newPosition.x = resizeData.startPos.x + deltaX;
+                    newPosition.y = resizeData.startPos.y + deltaY;
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width - deltaX
+                    );
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height - deltaY
+                    );
+                    break;
+
+                case "ne": // top-right - двигаем правый верхний угол
+                    newPosition.y = resizeData.startPos.y + deltaY;
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width + deltaX
+                    );
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height - deltaY
+                    );
+                    break;
+
+                case "sw": // bottom-left - двигаем левый нижний угол
+                    newPosition.x = resizeData.startPos.x + deltaX;
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width - deltaX
+                    );
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height + deltaY
+                    );
+                    break;
+
+                case "se": // bottom-right - двигаем правый нижний угол
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width + deltaX
+                    );
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height + deltaY
+                    );
+                    break;
+
+                case "n": // top - двигаем верхнюю сторону
+                    newPosition.y = resizeData.startPos.y + deltaY;
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height - deltaY
+                    );
+                    break;
+
+                case "s": // bottom - двигаем нижнюю сторону
+                    newSize.height = Math.max(
+                        10,
+                        resizeData.startSize.height + deltaY
+                    );
+                    break;
+
+                case "w": // left - двигаем левую сторону
+                    newPosition.x = resizeData.startPos.x + deltaX;
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width - deltaX
+                    );
+                    break;
+
+                case "e": // right - двигаем правую сторону
+                    newSize.width = Math.max(
+                        10,
+                        resizeData.startSize.width + deltaX
+                    );
+                    break;
+            }
+
+            newPosition.x = Math.max(0, newPosition.x);
+            newPosition.y = Math.max(0, newPosition.y);
+
+            setResizeData({
+                ...resizeData,
+                position: newPosition,
+                size: newSize,
+            });
+        } else if (dragPositionStart) {
             calculateDraggedPositions(point);
         }
     };
@@ -143,6 +261,17 @@ const Canvas = () => {
                     newPosition: pos,
                 })
             );
+        }
+        if (resizeData) {
+            dispatch(
+                resizeObjectOnSlide({
+                    slideId: slide.id,
+                    objectId: resizeData.id,
+                    newPosition: resizeData.position,
+                    newSize: resizeData.size,
+                })
+            );
+            setResizeData(null);
         }
         setDragPositionStart(null);
         setDragPositions(null);
@@ -177,10 +306,18 @@ const Canvas = () => {
                         <SlideObjectWidget
                             element={element}
                             onMouseDown={onMouseDown}
-                            changedPosition={
-                                dragPositions
-                                    ? dragPositions[element.id]
+                            onResizeStart={onResizeStart}
+                            changedSize={
+                                resizeData?.id === element.id
+                                    ? resizeData.size
                                     : undefined
+                            }
+                            changedPosition={
+                                resizeData?.id === element.id
+                                    ? resizeData.position
+                                    : dragPositions
+                                      ? dragPositions[element.id]
+                                      : undefined
                             }
                         />
                     ))}

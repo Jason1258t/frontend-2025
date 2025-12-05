@@ -34,7 +34,7 @@ export const createDefaultImageObject = (zIndex: number): ImageObject => {
         },
         rect: IMAGE_RECT,
         content: {
-            src: "https://i.pinimg.com/474x/80/23/85/8023856040e1c2a8a416054c81ee256e.jpg",
+            src: "https://i.pinimg.com/736x/82/04/93/820493a83e8147973bd6bc1eb3936b99.jpg",
         },
         zIndex: zIndex,
     };

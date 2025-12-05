@@ -10,12 +10,19 @@ import {
     selectElements,
 } from "@/store";
 import { useDragAndClick } from "./useDragAndClick";
+import ObjectControls from "./ObjectControls";
+import type { ResizeType } from "./resize";
 
 interface SlideObjectWidgetProps {
     element: SlideObject;
     onMouseDown: (e: React.MouseEvent) => void;
     changedPosition?: Position;
     changedSize?: Size;
+    onResizeStart?: (
+        e: React.MouseEvent,
+        type: ResizeType,
+        elementId: string
+    ) => void;
 }
 
 const SlideObjectWidget: React.FC<SlideObjectWidgetProps> = ({
@@ -23,6 +30,7 @@ const SlideObjectWidget: React.FC<SlideObjectWidgetProps> = ({
     onMouseDown,
     changedPosition,
     changedSize,
+    onResizeStart,
 }) => {
     const dispatch = useAppDispatch();
     const slide = useAppSelector(selectCurrentSlide)!;
@@ -41,32 +49,46 @@ const SlideObjectWidget: React.FC<SlideObjectWidgetProps> = ({
     };
 
     const handlers = useDragAndClick(onMouseDown, onClick);
+    const isSelected = selectedIds?.findIndex((e) => e == element.id) != -1;
+
     return (
-        <div
-            key={element.id}
-            {...handlers}
-            className={`${styles.element} ${
-                selectedIds?.findIndex((e) => e == element.id) != -1
-                    ? styles.selected
-                    : ""
-            }`}
-            style={{
-                left: changedPosition?.x ?? element.position.x,
-                top: changedPosition?.y ?? element.position.y,
-                width: changedSize?.width ?? element.rect.width,
-                height: changedSize?.height ?? element.rect.height,
-            }}
-        >
-            {element.type === "text" && (
-                <TextContent content={element.content} elementId={element.id} />
-            )}
-            {element.type === "image" && (
-                <ImageContent
-                    content={element.content}
-                    elementId={element.id}
+        <>
+            {isSelected && (
+                <ObjectControls
+                    position={changedPosition ?? element.position}
+                    rect={changedSize ?? element.rect}
+                    onResizeStart={(e, t) => {
+                        if (onResizeStart) {
+                            onResizeStart(e, t, element.id);
+                        }
+                    }}
                 />
             )}
-        </div>
+            <div
+                key={element.id}
+                {...handlers}
+                className={`${styles.element} ${isSelected ? "" : ""}`}
+                style={{
+                    left: changedPosition?.x ?? element.position.x,
+                    top: changedPosition?.y ?? element.position.y,
+                    width: changedSize?.width ?? element.rect.width,
+                    height: changedSize?.height ?? element.rect.height,
+                }}
+            >
+                {element.type === "text" && (
+                    <TextContent
+                        content={element.content}
+                        elementId={element.id}
+                    />
+                )}
+                {element.type === "image" && (
+                    <ImageContent
+                        content={element.content}
+                        elementId={element.id}
+                    />
+                )}
+            </div>
+        </>
     );
 };
 

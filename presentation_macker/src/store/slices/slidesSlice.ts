@@ -1,14 +1,19 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Slide } from "../../types/slide";
+import type { Slide } from "@/types";
+import { generateNewSlide } from "@/utils/defaultObjects";
 
 interface SlidesState {
     slides: Slide[];
     currentSlideId: string | null;
+    selectedSlideIds: string[];
 }
 
+const initSlide = generateNewSlide();
+
 const initialSlidesState: SlidesState = {
-    slides: [],
-    currentSlideId: null,
+    slides: [initSlide],
+    currentSlideId: initSlide.id,
+    selectedSlideIds: [],
 };
 
 const slidesSlice = createSlice({
@@ -56,6 +61,52 @@ const slidesSlice = createSlice({
                 slide.theme = { ...slide.theme, ...background };
             }
         },
+        selectSlides: (
+            state,
+            action: PayloadAction<{ slideIds: string[]; clear: boolean }>
+        ) => {
+            const { slideIds, clear } = action.payload;
+
+            if (clear) {
+                state.selectedSlideIds = slideIds;
+            } else {
+                const newIds = slideIds.filter(
+                    (id) => !state.selectedSlideIds.includes(id)
+                );
+                state.selectedSlideIds = [...state.selectedSlideIds, ...newIds];
+            }
+        },
+
+        toggleSlideSelection: (state, action: PayloadAction<string>) => {
+            const slideId = action.payload;
+            const index = state.selectedSlideIds.indexOf(slideId);
+
+            if (index === -1) {
+                state.selectedSlideIds.push(slideId);
+            } else {
+                state.selectedSlideIds.splice(index, 1);
+            }
+        },
+
+        clearSlideSelection: (state) => {
+            state.selectedSlideIds = [];
+        },
+
+        moveSlidesInOrder: (
+            state,
+            action: PayloadAction<{ slideIds: string[]; targetIndex: number }>
+        ) => {
+            const { slideIds, targetIndex } = action.payload;
+
+            const slidesToMove = state.slides.filter((s) =>
+                slideIds.includes(s.id)
+            );
+
+            if (slidesToMove.length === 0) return;
+            state.slides = state.slides.filter((s) => !slideIds.includes(s.id));
+
+            state.slides.splice(targetIndex, 0, ...slidesToMove);
+        },
     },
 });
 
@@ -65,5 +116,9 @@ export const {
     setCurrentSlide,
     moveSlide,
     changeSlideBackground,
+    selectSlides,
+    toggleSlideSelection,
+    clearSlideSelection,
+    moveSlidesInOrder,
 } = slidesSlice.actions;
 export default slidesSlice.reducer;

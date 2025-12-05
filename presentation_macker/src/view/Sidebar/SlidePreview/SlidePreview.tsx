@@ -6,10 +6,19 @@ import styles from "./SlidePreview.module.css";
 
 interface SlidePreviewProps {
   slide: Slide;
+  index: number;
   isActive: boolean;
+  isSelected: boolean;
   canDelete: boolean;
-  onSelect: () => void;
+  onSelect: (e: React.MouseEvent) => void;
   onDelete: () => void;
+  onDragStart: (e: React.DragEvent) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDragLeave: () => void;
+  onDrop: (e: React.DragEvent) => void;
+  onDragEnd: () => void; // ← ДОБАВЬТЕ ЭТО
+  dragOverPosition: "before" | "after" | null;
+  isDragging: boolean;
 }
 
 // Внутренний компонент SlideWidget для превью
@@ -20,7 +29,7 @@ interface SlideWidgetProps {
 
 const SlideWidget: React.FC<SlideWidgetProps> = ({
   slide,
-  scale = 0.15, // Масштаб по умолчанию для превью
+  scale = 0.15,
 }) => {
   return (
     <div
@@ -73,22 +82,45 @@ const SlideWidget: React.FC<SlideWidgetProps> = ({
 
 const SlidePreview: React.FC<SlidePreviewProps> = ({
   slide,
+  index,
   isActive,
+  isSelected,
   canDelete,
   onSelect,
   onDelete,
+  onDragStart,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onDragEnd, 
+  dragOverPosition,
+  isDragging,
 }) => {
   return (
     <li
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd} 
       onClick={onSelect}
-      className={`${styles.slidePreview} ${isActive ? styles.active : ""}`}
+      className={`${styles.slidePreview} ${isActive ? styles.active : ""} ${
+        isSelected ? styles.selected : ""
+      } ${isDragging ? styles.dragging : ""}`}
+      data-drag-position={dragOverPosition}
     >
+      {/* ... остальной код без изменений ... */}
+      {dragOverPosition === "before" && (
+        <div className={styles.dropIndicator} />
+      )}
+      
       <div className={styles.aspectRatio}>
         <div className={styles.preview}>
           <SlideWidget slide={slide} scale={244 / 960} />
         </div>
       </div>
-      <div className={styles.title}>{slide.id}.</div>
+      <div className={styles.title}>{index + 1}. {slide.id}</div>
       <div className={styles.actions}>
         {canDelete && (
           <button
@@ -103,6 +135,10 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
           </button>
         )}
       </div>
+      
+      {dragOverPosition === "after" && (
+        <div className={styles.dropIndicator} />
+      )}
     </li>
   );
 };
