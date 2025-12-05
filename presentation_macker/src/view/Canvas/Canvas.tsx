@@ -8,7 +8,7 @@ import {
     useAppDispatch,
     useAppSelector,
 } from "@/store";
-import { ImageContent, TextContent } from "./contents";
+import SlideObjectWidget from "./SlideObjectWidget";
 
 interface CanvasProps {
     onMouseDown: (e: React.MouseEvent, elementId: string) => void;
@@ -23,8 +23,6 @@ const Canvas: React.FC<CanvasProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const slide = useAppSelector(selectCurrentSlide);
-    const selectedIds =
-        useAppSelector((state) => state.objects.objectSelection?.objects) ?? [];
     const elements = useAppSelector(selectCurrentSlideObjects);
     const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -56,45 +54,10 @@ const Canvas: React.FC<CanvasProps> = ({
                     }}
                 >
                     {elements.map((element) => (
-                        <div
-                            key={element.id}
-                            onMouseDown={(e) => {
-                                dispatch(
-                                    selectElements({
-                                        slideId: slide.id,
-                                        objectIds: [element.id],
-                                        clear: !e.shiftKey,
-                                    })
-                                );
-                                onMouseDown(e, element.id);
-                            }}
-                            className={`${styles.element} ${
-                                selectedIds?.findIndex(
-                                    (e) => e == element.id
-                                ) != -1
-                                    ? styles.selected
-                                    : ""
-                            }`}
-                            style={{
-                                left: element.position.x,
-                                top: element.position.y,
-                                width: element.rect.width,
-                                height: element.rect.height,
-                            }}
-                        >
-                            {element.type === "text" && (
-                                <TextContent
-                                    content={element.content}
-                                    elementId={element.id}
-                                />
-                            )}
-                            {element.type === "image" && (
-                                <ImageContent
-                                    content={element.content}
-                                    elementId={element.id}
-                                />
-                            )}
-                        </div>
+                        <SlideObjectWidget
+                            element={element}
+                            onMouseDown={onMouseDown}
+                        />
                     ))}
                 </div>
             </div>
