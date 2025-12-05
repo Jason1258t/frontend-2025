@@ -140,6 +140,13 @@ const objectsSlice = createSlice({
                 ];
             }
         },
+        changeImageSRC: (state, action: PayloadAction<{slideId: string, objectId: string, src: string}>) => {
+            const {slideId, objectId, src} = action.payload;
+
+            const obj = state.objects[slideId].find(e => e.id === objectId);
+            if (obj?.type !== "image") return;
+            obj.content.src = src;
+        },
         clearObjectSelection: (state) => {
             state.objectSelection = { id: generateId(), objects: [] };
         },
@@ -155,6 +162,7 @@ export const {
     changeFontSize,
     changeFontFamily,
     moveObjectOnSlide,
-    changeObjectColor
+    changeObjectColor,
+    changeImageSRC
 } = objectsSlice.actions;
 export default objectsSlice.reducer;

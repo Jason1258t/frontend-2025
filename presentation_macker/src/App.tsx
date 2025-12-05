@@ -5,11 +5,12 @@ import Canvas from "./view/Canvas";
 import PropertiesPanel from "./view/PropertiesPanel";
 
 import styles from "./App.module.css";
-import { useAppSelector } from "./store/store";
+import { useAppDispatch, useAppSelector } from "./store/store";
 import { setTitle } from "./store/slices/presentationSlice";
 import { selectEditingElement } from "./store/selectors/objectsSelectors";
 
 const App = () => {
+    const dispatch = useAppDispatch();
     const { title } = useAppSelector((state) => state.presentation);
     const selectedElement = useAppSelector(selectEditingElement);
 
@@ -42,7 +43,7 @@ const App = () => {
                             if (value.length === 0) {
                                 value = "Новая презентация";
                             }
-                            setTitle(value);
+                            dispatch(setTitle(value));
                         }}
                     />
                 </div>

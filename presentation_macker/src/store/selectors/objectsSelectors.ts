@@ -8,6 +8,6 @@ export const selectEditingElement = createSelector(
     (selection, slideId, objects) => {
         if (!slideId) return;
         if (!selection) return;
-        return objects[slideId].find((e) => e.id === selection.objects[0]);
+        return objects[slideId]?.find((e) => e.id === selection.objects[0]);
     }
 );
