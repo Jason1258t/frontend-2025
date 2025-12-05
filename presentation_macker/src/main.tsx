@@ -1,19 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import App from "./App";
+import { store } from "./store";
+import { Provider } from "react-redux";
 
-import { getEditor, addEditorChangeHandler } from "@/editor/Editor.ts";
+// React 18
+const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-const root = createRoot(document.getElementById("root")!);
-
-const renderApp = () => {
-  root.render(
-    <StrictMode>
-      <App editor={getEditor()} />
-    </StrictMode>
-  );
-};
-
-addEditorChangeHandler(renderApp);
-renderApp();
+root.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+);

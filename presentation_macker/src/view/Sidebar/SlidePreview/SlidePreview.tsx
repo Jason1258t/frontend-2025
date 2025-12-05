@@ -79,7 +79,7 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
   onDelete,
 }) => {
   return (
-    <div
+    <li
       onClick={onSelect}
       className={`${styles.slidePreview} ${isActive ? styles.active : ""}`}
     >
@@ -103,7 +103,7 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
           </button>
         )}
       </div>
-    </div>
+    </li>
   );
 };
 

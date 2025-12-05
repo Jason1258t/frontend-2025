@@ -1,5 +1,4 @@
 type Text = {
-  id: string;
   value: string;
   fontFamily: string;
   fontSize: number;
@@ -7,7 +6,6 @@ type Text = {
 }
 
 type Image = {
-  id: string;
   src: string;
 }
 

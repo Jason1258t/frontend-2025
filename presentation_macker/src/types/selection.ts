@@ -1,8 +1,6 @@
-import type { SlideObject } from "./slide-content";
-
 type ObjectSelection = {
   id: string;
-  objects: SlideObject[];
+  objects: string[];
 };
 
 type SlideSelection = {
