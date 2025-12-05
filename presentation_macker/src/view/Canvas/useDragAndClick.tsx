@@ -8,7 +8,7 @@ export const useDragAndClick = (
   
   return {
     onMouseDown: (e: React.MouseEvent) => {
-      e.preventDefault();
+      // e.preventDefault();
       setStartPos({ x: e.clientX, y: e.clientY });
     },
     onMouseMove: (e: React.MouseEvent) => {

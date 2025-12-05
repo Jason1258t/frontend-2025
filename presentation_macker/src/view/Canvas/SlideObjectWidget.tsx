@@ -38,7 +38,6 @@ const SlideObjectWidget: React.FC<SlideObjectWidgetProps> = ({
         useAppSelector((state) => state.objects.objectSelection?.objects) ?? [];
 
     const onClick = (e: React.MouseEvent) => {
-        console.log("select el");
         dispatch(
             selectElements({
                 slideId: slide.id,

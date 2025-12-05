@@ -6,6 +6,7 @@
   border: 2px solid #e5e7eb;
   transition: all 0.2s;
   background: white;
+  
 }
 
 .slidePreview:hover {
@@ -46,6 +47,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 960px;
   height: 540px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .element {

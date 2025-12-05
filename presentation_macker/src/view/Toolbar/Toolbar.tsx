@@ -16,6 +16,7 @@ import {
     selectCurrentSlideObjects,
     addObjectToSlide,
     removeObjectFromSlide,
+    selectElements,
 } from "@/store";
 
 const Toolbar = () => {
@@ -46,6 +47,19 @@ const Toolbar = () => {
             ) {
                 e.preventDefault();
                 deleteSelectedObjects();
+            } else if (
+                e.key === "Escape" &&
+                currentSlide &&
+                selectedObjectsIds.length > 0
+            ) {
+                e.preventDefault();
+                dispatch(
+                    selectElements({
+                        slideId: currentSlide.id,
+                        objectIds: [],
+                        clear: true,
+                    })
+                );
             }
         };
 
@@ -54,7 +68,7 @@ const Toolbar = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [selectedObjects]);
+    }, [selectedObjects, currentSlide, selectedObjectsIds]);
 
     const onAddText = () => {
         const newText = createDefaultTextObject(

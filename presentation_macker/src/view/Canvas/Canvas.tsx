@@ -252,15 +252,17 @@ const Canvas = () => {
     };
 
     const onMouseUp = () => {
-        for (const id in dragPositions!) {
-            const pos = dragPositions[id];
-            dispatch(
-                moveObjectOnSlide({
-                    slideId: slide!.id,
-                    objectId: id,
-                    newPosition: pos,
-                })
-            );
+        if (dragPositions) {
+            for (const id in dragPositions!) {
+                const pos = dragPositions[id];
+                dispatch(
+                    moveObjectOnSlide({
+                        slideId: slide!.id,
+                        objectId: id,
+                        newPosition: pos,
+                    })
+                );
+            }
         }
         if (resizeData) {
             dispatch(
