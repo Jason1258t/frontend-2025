@@ -1,7 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 import styles from "./Canvas.module.css";
 import {
+    moveObjectOnSlide,
     selectCurrentSlide,
     selectCurrentSlideObjects,
     selectElements,
@@ -9,24 +10,143 @@ import {
     useAppSelector,
 } from "@/store";
 import SlideObjectWidget from "./SlideObjectWidget";
+import type { Position, Size } from "@/types";
 
-interface CanvasProps {
-    onMouseDown: (e: React.MouseEvent, elementId: string) => void;
-    onMouseMove: (e: React.MouseEvent) => void;
-    onMouseUp: () => void;
-}
-
-const Canvas: React.FC<CanvasProps> = ({
-    onMouseDown,
-    onMouseMove,
-    onMouseUp,
-}) => {
+const Canvas = () => {
     const dispatch = useAppDispatch();
     const slide = useAppSelector(selectCurrentSlide);
     const elements = useAppSelector(selectCurrentSlideObjects);
+    const selectedIds = useAppSelector(
+        (state) => state.objects.objectSelection?.objects
+    );
     const canvasRef = useRef<HTMLDivElement>(null);
 
+    const [dragPositions, setDragPositions] = useState<Record<
+        string,
+        Position
+    > | null>(null);
+
+    const [dragPositionStart, setDragPositionStart] = useState<Position | null>(
+        null
+    );
+
     if (!slide) return <h1>No slide</h1>;
+    const getSelectedRect = (): { position: Position; rect: Size } | null => {
+        const objects = elements.filter((e) =>
+            (selectedIds ?? []).includes(e.id)
+        );
+        if (objects.length === 0) return null;
+
+        const firstObj = objects[0];
+        let minX = firstObj.position.x;
+        let minY = firstObj.position.y;
+        let maxX = firstObj.position.x + firstObj.rect.width;
+        let maxY = firstObj.position.y + firstObj.rect.height;
+
+        for (let i = 1; i < objects.length; i++) {
+            const obj = objects[i];
+
+            if (obj.position.x < minX) {
+                minX = obj.position.x;
+            }
+
+            if (obj.position.y < minY) {
+                minY = obj.position.y;
+            }
+
+            const objRight = obj.position.x + obj.rect.width;
+            if (objRight > maxX) {
+                maxX = objRight;
+            }
+
+            const objBottom = obj.position.y + obj.rect.height;
+            if (objBottom > maxY) {
+                maxY = objBottom;
+            }
+        }
+
+        return {
+            position: { x: minX, y: minY },
+            rect: {
+                width: maxX - minX,
+                height: maxY - minY,
+            },
+        };
+    };
+
+    const pointInRect = (
+        point: { x: number; y: number },
+        rect: { position: Position; rect: Size }
+    ): boolean => {
+        if (point.x < rect.position.x || point.y < rect.position.y)
+            return false;
+        if (point.x > rect.position.x + rect.rect.width) return false;
+        if (point.y > rect.position.y + rect.rect.height) return false;
+
+        return true;
+    };
+
+    const calculateDraggedPositions = (clientPosition: {
+        x: number;
+        y: number;
+    }) => {
+        if (!dragPositionStart) return;
+
+        const objects = elements.filter((e) =>
+            (selectedIds ?? []).includes(e.id)
+        );
+
+        const positions: Record<string, Position> = {};
+
+        for (const obj of objects) {
+            const newPos = { ...obj.position };
+            newPos.x = obj.position.x + clientPosition.x - dragPositionStart.x;
+            newPos.y = obj.position.y + clientPosition.y - dragPositionStart.y;
+            positions[obj.id] = newPos;
+        }
+
+        setDragPositions(positions);
+    };
+
+    const getRelativePoint = (e: React.MouseEvent): Position => {
+        if (!canvasRef) return { x: 0, y: 0 };
+        const canvasRect = canvasRef.current!.getBoundingClientRect();
+
+        const relativeX = e.clientX - canvasRect.left;
+        const relativeY = e.clientY - canvasRect.top;
+        return { x: relativeX, y: relativeY };
+    };
+
+    const onMouseDown = (e: React.MouseEvent) => {
+        const selectedRect = getSelectedRect();
+        const point = getRelativePoint(e);
+        if (!selectedRect) return;
+        if (!pointInRect(point, selectedRect)) return;
+
+        setDragPositionStart(point);
+    };
+
+    const onMouseMove = (e: React.MouseEvent) => {
+        const point = getRelativePoint(e);
+        if (dragPositionStart) {
+            calculateDraggedPositions(point);
+        }
+    };
+
+    const onMouseUp = () => {
+        for (const id in dragPositions!) {
+            const pos = dragPositions[id];
+            dispatch(
+                moveObjectOnSlide({
+                    slideId: slide!.id,
+                    objectId: id,
+                    newPosition: pos,
+                })
+            );
+        }
+        setDragPositionStart(null);
+        setDragPositions(null);
+    };
 
     return (
         <div className={styles.canvasContainer}>
@@ -57,6 +177,11 @@ const Canvas: React.FC<CanvasProps> = ({
                         <SlideObjectWidget
                             element={element}
                             onMouseDown={onMouseDown}
+                            changedPosition={
+                                dragPositions
+                                    ? dragPositions[element.id]
+                                    : undefined
+                            }
                         />
                     ))}
                 </div>

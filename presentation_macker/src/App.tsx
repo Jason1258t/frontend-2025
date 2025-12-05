@@ -52,11 +52,7 @@ const App = () => {
                 <Sidebar />
                 <div className={styles.mainArea}>
                     <Toolbar />
-                    <Canvas
-                        onMouseDown={handleMouseDown}
-                        onMouseMove={handleMouseMove}
-                        onMouseUp={handleMouseUp}
-                    />
+                    <Canvas />
                     {selectedElement && <PropertiesPanel />}
                 </div>
             </div>

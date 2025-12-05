@@ -13,6 +13,7 @@ export const ImageContent: React.FC<ImageContentProps> = ({ content }) => {
             src={content.src}
             alt="slide element"
             className={styles.imageElement}
+            draggable="false"
             onClick={(e) => e.stopPropagation()}
         />
     );
