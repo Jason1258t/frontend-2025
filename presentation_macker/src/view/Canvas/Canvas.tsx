@@ -2,13 +2,13 @@ import React, { useRef } from "react";
 
 import styles from "./Canvas.module.css";
 import {
-    changeTextValue,
     selectCurrentSlide,
     selectCurrentSlideObjects,
     selectElements,
     useAppDispatch,
     useAppSelector,
 } from "@/store";
+import { ImageContent, TextContent } from "./contents";
 
 interface CanvasProps {
     onMouseDown: (e: React.MouseEvent, elementId: string) => void;
@@ -83,37 +83,15 @@ const Canvas: React.FC<CanvasProps> = ({
                             }}
                         >
                             {element.type === "text" && (
-                                <div
-                                    contentEditable
-                                    suppressContentEditableWarning
-                                    onBlur={(e) =>
-                                        dispatch(
-                                            changeTextValue({
-                                                slideId: slide.id,
-                                                objectId: element.id,
-                                                newValue:
-                                                    e.currentTarget
-                                                        .textContent || "",
-                                            })
-                                        )
-                                    }
-                                    className={styles.textElement}
-                                    style={{
-                                        fontSize: element.content.fontSize,
-                                        color: element.content.color,
-                                        fontFamily: element.content.fontFamily,
-                                    }}
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    {element.content.value}
-                                </div>
+                                <TextContent
+                                    content={element.content}
+                                    elementId={element.id}
+                                />
                             )}
                             {element.type === "image" && (
-                                <img
-                                    src={element.content.src}
-                                    alt="slide element"
-                                    className={styles.imageElement}
-                                    onClick={(e) => e.stopPropagation()}
+                                <ImageContent
+                                    content={element.content}
+                                    elementId={element.id}
                                 />
                             )}
                         </div>
