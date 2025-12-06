@@ -136,7 +136,3 @@
 .element.selected {
   outline: 2px solid #007bff;
 }
-
-.textElement {
-  cursor: text;
-}

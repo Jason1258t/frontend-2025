@@ -15,21 +15,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
 }
-
-.toolButton:disabled {
-  background-color: #666;
-}
-
 
 .deleteButton {
   background-color: #fee2e2;
+  border: none;
   color: #991b1b;
   margin-left: auto;
 }
