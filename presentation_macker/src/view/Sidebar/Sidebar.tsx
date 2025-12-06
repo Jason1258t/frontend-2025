@@ -13,13 +13,16 @@ import {
     clearSlideSelection,
     selectSlides,
 } from "@/store/slices/slidesSlice";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
+import React from "react";
 
 const Sidebar = () => {
     const { slides, currentSlideId, selectedSlideIds } = useAppSelector(
         (state) => state.slides
     );
     const dispatch = useAppDispatch();
+
+    const endDropZoneRef = useRef<HTMLDivElement>(null);
 
     const handleMoveSlides = useCallback(
         (slideIds: string[], targetIndex: number) => {
@@ -43,20 +46,12 @@ const Sidebar = () => {
         onMoveSlides: handleMoveSlides,
     });
 
-    const handleAddSlide = () => {
-        const slide = generateNewSlide();
-        dispatch(addSlide(slide));
-        dispatch(clearSlideSelection());
-    };
-
     const handleSelectSlide = useCallback(
         (e: React.MouseEvent, slideId: string) => {
             e.stopPropagation();
             if (e.ctrlKey || e.metaKey) {
-                // Ctrl/Cmd + клик - добавляем/убираем из выделения
                 dispatch(toggleSlideSelection(slideId));
             } else if (e.shiftKey) {
-                // Shift + клик - диапазонное выделение
                 const currentIndex = slides.findIndex(
                     (s) => s.id === currentSlideId
                 );
@@ -69,7 +64,6 @@ const Sidebar = () => {
                         .slice(start, end + 1)
                         .map((s) => s.id);
 
-                    // Добавляем только те, которых еще нет в выделении
                     const newIds = slideIds.filter(
                         (id) => !selectedSlideIds.includes(id)
                     );
@@ -80,7 +74,6 @@ const Sidebar = () => {
                     }
                 }
             } else {
-                // Обычный клик - выделяем только этот слайд
                 dispatch(clearSlideSelection());
                 dispatch(setCurrentSlide(slideId));
             }
@@ -88,32 +81,9 @@ const Sidebar = () => {
         [dispatch, slides, currentSlideId, selectedSlideIds]
     );
 
-    const handleDeleteSlide = useCallback(
-        (slideId: string) => {
-            if (selectedSlideIds.includes(slideId)) {
-                dispatch(clearSlideSelection());
-            }
-            dispatch(removeSlide(slideId));
-        },
-        [dispatch, selectedSlideIds]
-    );
-
-    const handleDeleteSelected = useCallback(() => {
-        if (selectedSlideIds.length === 0) return;
-
-        // Удаляем все выделенные слайды
-        selectedSlideIds.forEach((slideId) => {
-            dispatch(removeSlide(slideId));
-        });
-
-        // Снимаем выделение
-        dispatch(clearSlideSelection());
-    }, [dispatch, selectedSlideIds]);
-
     const canDeleteSelected =
         selectedSlideIds.length > 0 &&
         selectedSlideIds.length !== slides.length;
-
     return (
         <div
             className={styles.sidebar}
@@ -121,19 +91,29 @@ const Sidebar = () => {
                 dispatch(selectSlides({ slideIds: [], clear: true }))
             }
         >
-            {canDeleteSelected && (
+            {selectedSlideIds.length > 0 && (
                 <div className={styles.selectedPanel}>
                     <div className={styles.selectedCount}>
                         Выбрано: {selectedSlideIds.length}
                     </div>
-                    <button
-                        onClick={handleDeleteSelected}
-                        className={styles.deleteSelectedButton}
-                        title="Удалить выбранные"
-                    >
-                        <Trash2 size={16} />
-                        Удалить выбранные
-                    </button>
+                    {canDeleteSelected && (
+                        <button
+                            onClick={() => {
+                                if (selectedSlideIds.length === 0) return;
+
+                                selectedSlideIds.forEach((slideId) => {
+                                    dispatch(removeSlide(slideId));
+                                });
+
+                                dispatch(clearSlideSelection());
+                            }}
+                            className={styles.deleteSelectedButton}
+                            title="Удалить выбранные"
+                        >
+                            <Trash2 size={16} />
+                            Удалить выбранные
+                        </button>
+                    )}
                 </div>
             )}
 
@@ -144,26 +124,23 @@ const Sidebar = () => {
                     const dragOverPosition = getDragOverPosition(index);
 
                     return (
-                        <div>
+                        <>
                             {dragState.dragOverIndex === index && (
-                                <div
-                                    style={{
-                                        width: "100%",
-                                        height: 2,
-                                        margin: "10px 0",
-                                        background: "blue",
-                                    }}
-                                ></div>
+                                <div className={styles.dropIndicatorEnd}></div>
                             )}
                             <SlidePreview
-                                key={slide.id}
                                 slide={slide}
                                 index={index}
                                 isActive={isActive || isSelected}
                                 isSelected={isSelected}
                                 canDelete={slides.length > 1}
                                 onSelect={(e) => handleSelectSlide(e, slide.id)}
-                                onDelete={() => handleDeleteSlide(slide.id)}
+                                onDelete={() => {
+                                    if (selectedSlideIds.includes(slide.id)) {
+                                        dispatch(clearSlideSelection());
+                                    }
+                                    dispatch(removeSlide(slide.id));
+                                }}
                                 onDragStart={(e) =>
                                     handleDragStart(e, slide.id)
                                 }
@@ -174,13 +151,60 @@ const Sidebar = () => {
                                 dragOverPosition={dragOverPosition}
                                 isDragging={isDragging}
                             />
-                        </div>
+                        </>
                     );
                 })}
+
+                {isDragging && (
+                    <div
+                        ref={endDropZoneRef}
+                        className={styles.dropZoneEnd}
+                        onDragOver={(e: React.DragEvent) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = "move";
+                            handleDragOver(e, slides.length);
+                        }}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e: React.DragEvent) => {
+                            e.preventDefault();
+                            handleDrop(e, slides.length);
+                        }}
+                        style={{
+                            display: "block",
+                            minHeight: "100px",
+                            border: "2px dashed transparent",
+                            borderRadius: "8px",
+                            margin: "4px 0",
+                            transition: "border-color 0.2s",
+                        }}
+                    >
+                        {dragState.dragOverIndex === slides.length && (
+                            <div className={styles.dropIndicatorEnd} />
+                        )}
+                        <div
+                            style={{
+                                padding: "16px",
+                                color: "#6b7280",
+                                fontSize: "14px",
+                                textAlign: "center",
+                            }}
+                        >
+                            Переместить в конец
+                        </div>
+                    </div>
+                )}
             </ol>
 
             <div className={styles.addSlideContainer}>
-                <button onClick={handleAddSlide} className={styles.addButton} style={{marginBottom: 10}}>
+                <button
+                    onClick={() => {
+                        const slide = generateNewSlide();
+                        dispatch(addSlide(slide));
+                        dispatch(clearSlideSelection());
+                    }}
+                    className={styles.addButton}
+                    style={{ marginBottom: 10 }}
+                >
                     <Plus size={20} />
                     Новый слайд
                 </button>

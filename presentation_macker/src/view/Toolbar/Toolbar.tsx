@@ -40,14 +40,15 @@ const Toolbar = () => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+          // if (
+          //       (e.key === "Delete" || e.key === "Backspace") &&
+          //       currentSlide &&
+          //       selectedObjectsIds.length > 0
+          //   ) {
+          //       e.preventDefault();
+          //       deleteSelectedObjects();
+          //   } else 
             if (
-                (e.key === "Delete" || e.key === "Backspace") &&
-                currentSlide &&
-                selectedObjectsIds.length > 0
-            ) {
-                e.preventDefault();
-                deleteSelectedObjects();
-            } else if (
                 e.key === "Escape" &&
                 currentSlide &&
                 selectedObjectsIds.length > 0

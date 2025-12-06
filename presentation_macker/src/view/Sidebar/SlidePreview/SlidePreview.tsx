@@ -117,7 +117,6 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
             } ${isDragging ? styles.dragging : ""}`}
             data-drag-position={dragOverPosition}
         >
-            {/* ... остальной код без изменений ... */}
             {dragOverPosition === "before" && (
                 <div className={styles.dropIndicator} />
             )}

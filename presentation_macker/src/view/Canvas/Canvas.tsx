@@ -13,6 +13,7 @@ import {
 import SlideObjectWidget from "./SlideObjectWidget";
 import type { Position, Size } from "@/types";
 import type { ResizeData, ResizeType } from "./resize";
+import ObjectControls from "./ObjectControls";
 
 const Canvas = () => {
     const dispatch = useAppDispatch();
@@ -31,6 +32,8 @@ const Canvas = () => {
     const [dragPositionStart, setDragPositionStart] = useState<Position | null>(
         null
     );
+
+    const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
 
     const [resizeData, setResizeData] = useState<ResizeData | null>();
 
@@ -79,6 +82,17 @@ const Canvas = () => {
         };
     };
 
+    const getSelectedRectWithOffset = (): {
+        position: Position;
+        rect: Size;
+    } => {
+        const selectedRect = getSelectedRect()!;
+        if (!dragPositions) return selectedRect;
+        selectedRect.position.x += dragOffset.x;
+        selectedRect.position.y += dragOffset.y;
+        return selectedRect;
+    };
+
     const pointInRect = (
         point: { x: number; y: number },
         rect: { position: Position; rect: Size }
@@ -91,10 +105,7 @@ const Canvas = () => {
         return true;
     };
 
-    const calculateDraggedPositions = (clientPosition: {
-        x: number;
-        y: number;
-    }) => {
+    const calculateDraggedPositions = () => {
         if (!dragPositionStart) return;
 
         const objects = elements.filter((e) =>
@@ -105,8 +116,8 @@ const Canvas = () => {
 
         for (const obj of objects) {
             const newPos = { ...obj.position };
-            newPos.x = obj.position.x + clientPosition.x - dragPositionStart.x;
-            newPos.y = obj.position.y + clientPosition.y - dragPositionStart.y;
+            newPos.x = obj.position.x + dragOffset.x;
+            newPos.y = obj.position.y + dragOffset.y;
             positions[obj.id] = newPos;
         }
 
@@ -160,8 +171,6 @@ const Canvas = () => {
 
             switch (resizeData.type) {
                 case "nw": // top-left - двигаем левый верхний угол
-                    newPosition.x = resizeData.startPos.x + deltaX;
-                    newPosition.y = resizeData.startPos.y + deltaY;
                     newSize.width = Math.max(
                         10,
                         resizeData.startSize.width - deltaX
@@ -170,10 +179,16 @@ const Canvas = () => {
                         10,
                         resizeData.startSize.height - deltaY
                     );
+
+                    newPosition.x =
+                        resizeData.startPos.x +
+                        (resizeData.startSize.width - newSize.width);
+                    newPosition.y =
+                        resizeData.startPos.y +
+                        (resizeData.startSize.height - newSize.height);
                     break;
 
                 case "ne": // top-right - двигаем правый верхний угол
-                    newPosition.y = resizeData.startPos.y + deltaY;
                     newSize.width = Math.max(
                         10,
                         resizeData.startSize.width + deltaX
@@ -182,10 +197,14 @@ const Canvas = () => {
                         10,
                         resizeData.startSize.height - deltaY
                     );
+
+                    newPosition.x = resizeData.startPos.x;
+                    newPosition.y =
+                        resizeData.startPos.y +
+                        (resizeData.startSize.height - newSize.height);
                     break;
 
                 case "sw": // bottom-left - двигаем левый нижний угол
-                    newPosition.x = resizeData.startPos.x + deltaX;
                     newSize.width = Math.max(
                         10,
                         resizeData.startSize.width - deltaX
@@ -194,6 +213,11 @@ const Canvas = () => {
                         10,
                         resizeData.startSize.height + deltaY
                     );
+
+                    newPosition.x =
+                        resizeData.startPos.x +
+                        (resizeData.startSize.width - newSize.width);
+                    newPosition.y = resizeData.startPos.y;
                     break;
 
                 case "se": // bottom-right - двигаем правый нижний угол
@@ -208,11 +232,13 @@ const Canvas = () => {
                     break;
 
                 case "n": // top - двигаем верхнюю сторону
-                    newPosition.y = resizeData.startPos.y + deltaY;
                     newSize.height = Math.max(
                         10,
                         resizeData.startSize.height - deltaY
                     );
+                    newPosition.y =
+                        resizeData.startPos.y +
+                        (resizeData.startSize.height - newSize.height);
                     break;
 
                 case "s": // bottom - двигаем нижнюю сторону
@@ -223,11 +249,13 @@ const Canvas = () => {
                     break;
 
                 case "w": // left - двигаем левую сторону
-                    newPosition.x = resizeData.startPos.x + deltaX;
                     newSize.width = Math.max(
                         10,
                         resizeData.startSize.width - deltaX
                     );
+                    newPosition.x =
+                        resizeData.startPos.x +
+                        (resizeData.startSize.width - newSize.width);
                     break;
 
                 case "e": // right - двигаем правую сторону
@@ -247,7 +275,12 @@ const Canvas = () => {
                 size: newSize,
             });
         } else if (dragPositionStart) {
-            calculateDraggedPositions(point);
+            setDragOffset({
+                x: point.x - dragPositionStart.x,
+                y: point.y - dragPositionStart.y,
+            });
+
+            calculateDraggedPositions();
         }
     };
 
@@ -277,6 +310,7 @@ const Canvas = () => {
         }
         setDragPositionStart(null);
         setDragPositions(null);
+        setDragOffset({ x: 0, y: 0 });
     };
 
     return (
@@ -304,6 +338,9 @@ const Canvas = () => {
                         );
                     }}
                 >
+                    {(selectedIds?.length ?? 0) > 1 && (
+                        <ObjectControls {...getSelectedRectWithOffset()} />
+                    )}
                     {elements.map((element) => (
                         <SlideObjectWidget
                             element={element}

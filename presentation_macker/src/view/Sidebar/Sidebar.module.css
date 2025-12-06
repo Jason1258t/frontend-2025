@@ -54,7 +54,29 @@
 
 .dropIndicatorEnd {
   width: 90%;
+  margin: 0 auto;
   height: 3px;
   background-color: #3b82f6;
   border-radius: 2px;
+}
+
+.addSlideContainer {
+  padding: 10px;
+}
+
+.selectedPanel {
+  padding: 10px;
+}
+
+.selectedCount {
+  color: #111;
+  margin-bottom: 4px;
+}
+.deleteSelectedButton {
+  background-color: #ff6a6a;
+  width: 100%;
+}
+
+.deleteSelectedButton:hover {
+  background-color: #ff3e3e;
 }
