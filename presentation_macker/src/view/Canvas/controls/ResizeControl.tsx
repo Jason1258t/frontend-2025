@@ -1,5 +1,5 @@
 import React from "react";
-import type { ResizeType } from "./resize";
+import type { ResizeType } from "../hooks/";
 
 interface ResizeControlProps {
     type: ResizeType;
@@ -9,7 +9,7 @@ interface ResizeControlProps {
     onMouseDown?: (e: React.MouseEvent, type: ResizeType) => void;
 }
 
-const ResizeControl: React.FC<ResizeControlProps> = ({
+export const ResizeControl: React.FC<ResizeControlProps> = ({
     type,
     position,
     rect,

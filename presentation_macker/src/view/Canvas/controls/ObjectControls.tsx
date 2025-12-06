@@ -1,36 +1,32 @@
 import type { Position, Size } from "@/types";
 import ResizeControls from "./ResizeControls";
-import type { ResizeType } from "./resize";
+import type { ResizeType } from "../hooks/";
 
 interface ObjectControlsProps {
     position: Position;
     rect: Size;
     onResizeStart?: (e: React.MouseEvent, type: ResizeType) => void;
-    showAllControls?: boolean;
+    showControls?: boolean;
 }
 
-const ObjectControls: React.FC<ObjectControlsProps> = ({
+export const ObjectControls: React.FC<ObjectControlsProps> = ({
     position,
     rect,
     onResizeStart,
-    showAllControls = true,
+    showControls = true,
 }) => {
     const controlSize = 6;
 
-    // Определяем, какие контролы показывать
-    const controlTypes: Array<"nw" | "ne" | "sw" | "se"> = [
+    const allControlTypes: Array<ResizeType> = [
         "nw",
         "ne",
         "sw",
         "se",
+        "n",
+        "s",
+        "w",
+        "e",
     ];
-
-    // Если нужны все 8 контролов (включая боковые)
-    const allControlTypes: Array<
-        "nw" | "ne" | "sw" | "se" | "n" | "s" | "w" | "e"
-    > = showAllControls
-        ? ["nw", "ne", "sw", "se", "n", "s", "w", "e"]
-        : ["nw", "ne", "sw", "se"];
 
     return (
         <>
@@ -48,13 +44,15 @@ const ObjectControls: React.FC<ObjectControlsProps> = ({
             ></div>
 
             {/* Элементы изменения размера */}
-            <ResizeControls
-                position={position}
-                rect={rect}
-                controlSize={controlSize}
-                controls={showAllControls ? allControlTypes : controlTypes}
-                onResizeStart={onResizeStart}
-            />
+            {showControls && (
+                <ResizeControls
+                    position={position}
+                    rect={rect}
+                    controlSize={controlSize}
+                    controls={allControlTypes}
+                    onResizeStart={onResizeStart}
+                />
+            )}
         </>
     );
 };

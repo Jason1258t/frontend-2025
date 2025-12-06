@@ -9,9 +9,9 @@ import {
     selectCurrentSlide,
     selectElements,
 } from "@/store";
-import { useDragAndClick } from "./useDragAndClick";
-import ObjectControls from "./ObjectControls";
-import type { ResizeType } from "./resize";
+import { useDragAndClick } from "./hooks/useDragAndClick";
+import ObjectControls from "./controls/ObjectControls";
+import type { ResizeType } from "./hooks";
 
 interface SlideObjectWidgetProps {
     element: SlideObject;
