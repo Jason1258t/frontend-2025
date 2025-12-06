@@ -16,7 +16,6 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background-color: #666;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -24,9 +23,10 @@
   transition: background-color 0.2s;
 }
 
-.toolButton:hover {
-  background-color: #e5e7eb;
+.toolButton:disabled {
+  background-color: #666;
 }
+
 
 .deleteButton {
   background-color: #fee2e2;

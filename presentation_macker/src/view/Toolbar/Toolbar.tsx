@@ -1,103 +1,30 @@
-import { Type, ImageIcon, Trash2, Palette } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Type, ImageIcon, Trash2, Palette, Undo, Redo } from "lucide-react";
 
 import styles from "./Toolbar.module.css";
 import ThemeOverlay from "./ThemeOverlay";
 
-import {
-    createDefaultImageObject,
-    createDefaultTextObject,
-} from "@/utils/defaultObjects";
-import { getZIndexForNewObject } from "@/utils/getZIndexForObject";
-import {
-    useAppDispatch,
-    useAppSelector,
-    selectCurrentSlide,
-    selectCurrentSlideObjects,
-    addObjectToSlide,
-    removeObjectFromSlide,
-    selectElements,
-} from "@/store";
+import { useToolbar } from "./hooks/usetToolbar";
 
 const Toolbar = () => {
-    const dispatch = useAppDispatch();
-    const currentSlide = useAppSelector(selectCurrentSlide);
-    const selectedObjectsIds =
-        useAppSelector((state) => state.objects.objectSelection?.objects) ?? [];
-    const selectedObjects = useAppSelector(selectCurrentSlideObjects);
+    const {
+        onAddImage,
+        onAddText,
+        showSlideAction,
+        onChangeBackground,
+        undo,
+        redo,
+        canRedo,
+        canUndo,
+        deleteSelectedObjects,
+        showDeleteAction,
+        showOverlay,
+        closeOverlay,
+    } = useToolbar();
 
-    const deleteSelectedObjects = () => {
-        if (!currentSlide) return;
-        for (const el of selectedObjectsIds) {
-            dispatch(
-                removeObjectFromSlide({
-                    slideId: currentSlide.id,
-                    objectId: el,
-                })
-            );
-        }
-    };
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-          // if (
-          //       (e.key === "Delete" || e.key === "Backspace") &&
-          //       currentSlide &&
-          //       selectedObjectsIds.length > 0
-          //   ) {
-          //       e.preventDefault();
-          //       deleteSelectedObjects();
-          //   } else 
-            if (
-                e.key === "Escape" &&
-                currentSlide &&
-                selectedObjectsIds.length > 0
-            ) {
-                e.preventDefault();
-                dispatch(
-                    selectElements({
-                        slideId: currentSlide.id,
-                        objectIds: [],
-                        clear: true,
-                    })
-                );
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [selectedObjects, currentSlide, selectedObjectsIds]);
-
-    const onAddText = () => {
-        const newText = createDefaultTextObject(
-            getZIndexForNewObject(selectedObjects)
-        );
-        dispatch(
-            addObjectToSlide({ slideId: currentSlide!.id, object: newText })
-        );
-    };
-
-    const onAddImage = () => {
-        const newImage = createDefaultImageObject(
-            getZIndexForNewObject(selectedObjects)
-        );
-        dispatch(
-            addObjectToSlide({ slideId: currentSlide!.id, object: newImage })
-        );
-    };
-
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    const onChangeBackground = () => {
-        setShowOverlay(true);
-    };
     return (
         <div className={styles.toolbar}>
             <div className={styles.toolbarContent}>
-                {currentSlide && (
+                {showSlideAction && (
                     <>
                         {" "}
                         <button
@@ -123,7 +50,22 @@ const Toolbar = () => {
                         </button>
                     </>
                 )}
-                {selectedObjectsIds && currentSlide && (
+                <button
+                    onClick={undo}
+                    className={styles.toolButton}
+                    disabled={!canUndo}
+                >
+                    <Undo size={20} />
+                </button>
+
+                <button
+                    onClick={redo}
+                    className={styles.toolButton}
+                    disabled={!canRedo}
+                >
+                    <Redo size={20} />
+                </button>
+                {showDeleteAction && (
                     <button
                         onClick={deleteSelectedObjects}
                         className={`${styles.toolButton} ${styles.deleteButton}`}
@@ -133,9 +75,7 @@ const Toolbar = () => {
                     </button>
                 )}
             </div>
-            {showOverlay && (
-                <ThemeOverlay onClose={() => setShowOverlay(false)} />
-            )}
+            {showOverlay && <ThemeOverlay onClose={closeOverlay} />}
         </div>
     );
 };
