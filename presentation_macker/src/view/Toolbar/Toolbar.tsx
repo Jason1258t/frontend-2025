@@ -26,7 +26,6 @@ const Toolbar = () => {
             <div className={styles.toolbarContent}>
                 {showSlideAction && (
                     <>
-                        {" "}
                         <button
                             onClick={onAddText}
                             className={styles.toolButton}
